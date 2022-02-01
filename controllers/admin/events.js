@@ -232,6 +232,7 @@ exports.addarrayAttendee = (req,res,next)=>{
     console.log(req.params.id)
     eventid=req.params.id
     attendeeArray = req.body;
+    const foundedEmails = [];
     for(let i=0;i<attendeeArray.length;i++){
         con.query('SELECT * FROM community WHERE com_email_1 = ? OR com_email_2 = ?',[attendeeArray[i].com_email_1,attendeeArray[i].com_email_1],function(err,rows,fields){
             // console.log('rows up', rows.length)
@@ -251,7 +252,7 @@ exports.addarrayAttendee = (req,res,next)=>{
                             console.log(err)
                         }
                     })
-                }else{
+                }if (rows.length ===0){
                     con.query('INSERT INTO community SET ?',[attendeeArray[i]],function(err, result){
                         // console.log('result',result)
                         if(err){
@@ -269,11 +270,22 @@ exports.addarrayAttendee = (req,res,next)=>{
                         }
                     })
                 }
-                if(i===attendeeArray.length-1){
-                    res.status(200).json({
-                        message: 'The process has  done successfuly'
-                    })
-                }   
+                else {
+                    foundedEmails.push(`${attendeeArray[i].com_email_1} or ${attendeeArray[i].com_email_2} is found`)
+                }
+                
+                if (i === attendeeArray.length - 1) {
+                    if (foundedEmails.length === 0) {
+
+                        res.status(200).json({
+                            message: 'The process has  done successfuly'
+                        })
+                    } else {
+                        res.status(400).json({
+                            message: 'Some E-mail duplicated and other E-mail has inserted'
+                        })
+                    }
+                } 
             }
         })
     }

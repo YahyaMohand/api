@@ -51,8 +51,10 @@ exports.addarrayStudent = (req,res,next)=>{
     console.log(req.params.id)
     trainingid=req.params.id
     studentArray = req.body;
+    console.log(studentArray)
+    const foundedEmails = [];
     for(let i=0;i<studentArray.length;i++){
-        con.query('SELECT * FROM community WHERE com_email_1 = ? OR com_email_2 = ?',[studentArray[i].com_email_1,studentArray[i].com_email_1],function(err,rows,fields){
+        con.query('SELECT * FROM community WHERE com_email_1 = ? OR com_email_2 = ?',[studentArray[i].com_email_1,studentArray[i].com_email_2],function(err,rows,fields){
             // console.log('rows up', rows.length)
             if(err){
                 res.status(404).json({
@@ -70,7 +72,7 @@ exports.addarrayStudent = (req,res,next)=>{
                             console.log(err)
                         }
                     })
-                }else{
+                }if (rows.length===0) {
                     con.query('INSERT INTO community SET ?',[studentArray[i]],function(err, result){
                         // console.log('result',result)
                         if(err){
@@ -84,15 +86,26 @@ exports.addarrayStudent = (req,res,next)=>{
                                 if(err){
                                     console.log(err)
                                 }
+                               
                             })
                         }
                     })
+                } else {
+                    foundedEmails.push(`${studentArray[i].com_email_1} or ${studentArray[i].com_email_2} is found`)
                 }
-                if(i===studentArray.length-1){
-                    res.status(200).json({
-                        message: 'The process has  done successfuly'
-                    })
-                }   
+                
+                if (i === studentArray.length - 1) {
+                    if (foundedEmails.length === 0) {
+
+                        res.status(200).json({
+                            message: 'The process has  done successfuly'
+                        })
+                    } else {
+                        res.status(400).json({
+                            message: 'Some E-mail duplicated and other E-mail has inserted'
+                        })
+                    }
+                }  
             }
         })
     }

@@ -87,7 +87,7 @@ exports.getMemrentById = (req, res) =>{
             });
         }else{
             membershipsrents = rows[0]
-            con.query(`SELECT * FROM membershipsrentcommunity WHERE membershipsrentid = ?`,[membershipsrentid],
+            con.query(`SELECT * FROM community LEFT JOIN membershipsrentcommunity ON community.communityid = membershipsrentcommunity.communityid WHERE membershipsrentcommunity.membershipsrentid = ?`,[membershipsrentid],
             function(err,rows,fields){
                 if(err){
                     res.status(400).json({
@@ -158,8 +158,8 @@ exports.createMembership = (req, res) => {
         mem_teamname:req.body.mem_teamname,
         mem_description:req.body.mem_description,
         mem_duration:req.body.mem_duration,
-        mem_editedby:req.body.mem_editedby,
-        mem_createdby:req.body.mem_createdby,
+        mem_editedby:req.params.mem_editedby,
+        mem_createdby:req.params.mem_createdby,
     }
     con.query('INSERT INTO membershipsrent SET ?',
     [updateMemrent],

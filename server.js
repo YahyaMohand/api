@@ -106,6 +106,7 @@ const adminSuccessStories = require('./routes/admin/successstories')
 const adminRecommandation = require('./routes/admin/recommandations')
 const adminProducts = require('./routes/admin/products')
 const adminServices = require('./routes/admin/services')
+const adminMembershipsrent = require('./routes/admin/membershipsrents')
 
 // const adminOrdersRoutes = require('./routes/admin/orders')
 // const adminParameters = require('./routes/admin/parameters')
@@ -173,6 +174,9 @@ adminProducts)
 app.use('/admin',
 // cors({origin: 'https://www.kwaysi.com'}),
 adminServices)
+app.use('/admin',
+// cors({origin: 'https://www.kwaysi.com'}),
+adminMembershipsrent)
 
 // // managment admin
 // app.use('/admin',
